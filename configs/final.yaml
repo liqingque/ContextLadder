@@ -1,0 +1,163 @@
+# Frozen final configuration — GOAI virtual-cell, ContextLadder / HCCE-Proteome.
+# Every quantity the final submission depends on is fixed here. Nothing in the
+# training or inference path may be chosen by hand at run time.
+run_id: ContextLadder_HCCE_mask_compound_3seed
+
+model:
+  variant: mask_compound          # A2 masked-entity training, compound field only
+  embedding_dim: 64
+  epochs: 40
+  ema_decay: 0.0                  # disabled -- see rejected_alternatives below
+  mask_p: 0.25                    # probability a training row's compound token -> <UNK>
+  early_stopping: none            # deliberately disabled -- see note below
+  epoch_selection: "fixed at 40; chosen on the frozen validation split during model selection,
+    then frozen. No early stopping and no per-run checkpoint selection, so a reproduction run
+    cannot diverge by stopping at a different epoch."
+  ema_note_unused: "EMA carries no bias correction (a recorded harness limitation). At 120 epochs =
+    5,640 optimizer steps, 0.99**5640 is effectively zero, so the missing correction has no
+    effect here. It is why decay 0.999 collapsed at 40 epochs and was rejected."
+  optimizer: AdamW
+  learning_rate: 1.0e-3
+  weight_decay: 1.0e-4
+  loss: "masked MSE averaged over the concat / FiLM / legacy heads, plus model.regularization();
+    the mask is the observed-value mask, so missing proteins contribute no gradient"
+  expert_blend:                   # within one seed
+    legacy_film: 0.5
+    hcce_film: 0.5
+
+ensemble:
+  seeds: [20260810, 3407, 42]
+  weights: [equal, equal, equal]  # equal average over members, order-independent
+  combine: mean_of_member_predictions
+  seed_provenance: "Fixed a priori, not selected on validation. An attempt to select top-3
+    from ten seeds by validation RMSE was made in P4 and rejected -- see rejected_alternatives.
+    Superseded text follows for the record: These three were selected from ten trained seeds by validation RMSE,
+    top-3, k fixed at 3. k was not searched and seeds were not picked by module score.
+    The full ten-seed table is in outputs/p4_ra/top3_selection.json and in the P4 report.
+    The SELECTED seeds are frozen here rather than asking a reproducer to retrain ten and
+    re-select: validation RMSE ordering can differ across hardware, which would select a
+    different three and produce a different prediction.csv, destroying bit-identity."
+  fit_seed_convention: "The submission path (scripts/train.py) uses fit_seed = seed. The
+    validation-experiment path (scripts/a2b_train_variants.py) uses fit_seed = seed + 9000.
+    Both conventions predate this round and every prior selection round used the same split.
+    Consequence: the validation evidence supports this CONFIGURATION, not these three specific
+    weight sets. Validation numbers are reported separately from the shipped artifact's
+    post-hoc test numbers, as they have been throughout."
+
+# --- Architecture, spelled out because the submission spec (IV.4.1) requires the final
+# --- configuration to state network dimensions, depth, heads, dropout and batch size.
+# --- These values live in src/mosaic/model.py and scripts/run_hcce.py (HCCEModel); they are
+# --- recorded here for review and are NOT read back by the training code, so editing them
+# --- here changes nothing at run time. The code remains the single source of truth.
+architecture:
+  family: "MLP with FiLM modulation. No attention anywhere, therefore no heads/num_heads."
+  attention_heads: not_applicable
+  dropout: 0.10                   # every dropout layer in the model
+  categorical_fields: [compound, strain, medium, source, instrument, plate]
+  bio_fields: [strain, medium]
+  measure_fields: [source, instrument, plate]
+  embedding_dim_per_field: 64
+  encoder_widths:                 # each route sums a learned-embedding branch and a one-hot branch
+    chem: 256                     # compound
+    bio: 256                      # strain + medium + 2 numeric (temperature, time bases)
+    measure: 128                  # source + instrument + 0.25 * plate  (hierarchical shrinkage)
+  film:
+    modulation_mlp: [384, 256, 512]        # context -> (gamma, beta), chunked into 2 x 256
+    head_mlp: [256, 512, 256, n_out]       # 3 hidden transitions, GELU, dropout after the first
+    direct_context_residual_weight: 0.05
+  heads_produced: [concat, film, legacy]   # three prediction tensors per forward pass
+  inference_blend: "0.5 * legacy_film + 0.5 * hcce_film, averaged over the three seeds first;
+    the concat head is trained but not used at inference"
+  regularization: "1e-4 * mean(plate_embedding[1:]**2) -- plate deviations are shrunk toward the
+    source/instrument level; no other explicit penalty"
+
+# --- Training schedule (IV.4.1: optimizer, lr schedule, gradient clipping, early stopping,
+# --- checkpoint selection, resume, logging, failure recovery).
+training_schedule:
+  batch_size: 128
+  shuffle: true
+  dataloader_workers: 0
+  dataloader_generator_seed: "= seed  (fixed, so batch order is reproducible)"
+  lr_schedule: none               # constant 1e-3 for all 40 epochs; no warmup, no decay
+  gradient_clipping: none
+  early_stopping: none            # see model.early_stopping / model.epoch_selection above
+  checkpoint_selection: "last epoch. No per-epoch checkpointing and no best-epoch tracking, so
+    there is nothing for a reproduction run to select differently."
+  loss_weights: "equal 1/3 over the concat / FiLM / legacy heads, plus model.regularization()"
+  mask_logic: "the loss mask is the observed-value mask of the target matrix; missing proteins
+    contribute zero gradient. NA is never imputed as 0 in the loss."
+  resume_from_checkpoint: not_supported
+  resume_rationale: "one full training run is ~98 s for all three seeds on a single RTX 3090;
+    recovery from a failure is a rerun, which is bit-identical by construction."
+  logging: "per-epoch mean training loss is written to each member's history in
+    runs/final/run_manifest.json; there is no separate log file to reconcile."
+
+# --- Validation strategy (IV.4.1: which splits, which metric, how the epoch was chosen).
+validation_strategy:
+  splits_used: [val_strain_only, val_chem_only, val_both, val_time]   # 3,038 rows total
+  metric: "log2 RMSE over observed positions, plus the official six-module weighted score
+    (scripts/evaluate_official_modules.py) for candidate adjudication"
+  epoch_choice: "40, selected once during model selection on the frozen validation split and
+    then frozen into this file. Test metrics were never consulted for any selection."
+  test_metrics_invoked_during_selection: false
+
+# --- Resources (IV.4.1 / F: estimated compute, VRAM, storage, runtime), measured on one RTX 3090.
+runtime:
+  device: "1x NVIDIA RTX 3090 (24 GB); CPU-only untested"
+  train_seconds_all_three_seeds: 97.6
+  predict_seconds: 16.2
+  peak_vram_mib: 923
+  disk_mb: "~280 (prediction.csv 193 MB + three checkpoints 86 MB)"
+
+preprocessing:
+  protein_filter:
+    rule: "drop proteins whose missing rate over split_final=='train' rows is >= threshold"
+    threshold: 0.80
+    fit_scope: "split_final == 'train' only"
+    expected_protein_count: 4422
+  target_space: log2_raw
+  log2_rule: "log2 applied only to finite, strictly positive raw intensities; NA kept as mask"
+  standardization:
+    target_mean_std_fit_scope: "split_final == 'train' only"
+  categorical_fields: [compound, strain, medium, source, instrument, plate]
+  unknown_token: "index 0, reserved; category maps fit on train rows only"
+  numeric_fields: [temperature, time]
+  time_representation: "standardized time + log-time + 5 RBF bases"
+
+data_boundary:
+  training_labels: "split_final == 'train' (5,920 rows)"
+  validation_use: "model selection only; never trained on, never used to estimate any statistic"
+  test_use: "test metadata only, at inference; test proteome / test truth never read"
+
+output:
+  prediction_scale: log2
+  protein_space: contract_4422
+  n_rows: 4454
+  sample_id_column: sample_ID
+
+external_features:
+  used_by_final_model: false
+  note: "The final model consumes only official sample metadata fields. External resources
+    appear in the falsification experiments only (see 方案说明文档 §七) and enter no prediction path."
+
+determinism:
+  seed_scope: "python, numpy, torch CPU+CUDA"
+  cudnn_deterministic: true
+  cudnn_benchmark: false
+  note: "GPU reductions are not bit-deterministic across hardware; see README tolerance note."
+
+rejected_alternatives:
+  ep120_ema99_top3_of_10:
+    measured_on_validation_experiment_path: "RMSE 0.417717 vs baseline 0.420258 (a2b path,
+      fit_seed = seed + 9000). Passed all five frozen P4 adoption conditions: dW +0.00788,
+      dW_noS2 +0.00729, all six modules improved, Gate-Z clear (S1 30.9% of dW), Gate-R1F n/a."
+    why_rejected: "The gain did not survive a change of fit-seed family. Re-measured on the
+      submission path (fit_seed = seed) with the SAME configuration and the SAME three fixed
+      seeds, the configuration effect FLIPS SIGN: -0.001339 on the a2b path, +0.002174 on the
+      submission path. Same config, same seeds, only the seed offset differs. The +0.00788 was
+      therefore not a property of the configuration but of an unmeasured degree of freedom."
+    consequence_for_the_floor: "The P4 calibrated floor (+0.002) was estimated from null
+      ensembles drawn from a SINGLE seed family (p1_multiseed, fit_seed = seed + 9000). It
+      measures within-family run-to-run noise and does not span the fit-seed convention. The
+      between-family effect measured here is of the same order, so the floor was optimistic.
+      A detection floor must span every unmeasured degree of freedom, not only the one varied."

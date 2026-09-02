@@ -1,0 +1,7 @@
+{
+  "mask_compound_3seed_base": "outputs/r1_convex_mix_3seed/prediction_val_mean50_3seed.parquet",
+  "B1_gbdt_global_pca64": "outputs/p05_scenario_baselines/prediction_val_B1_gbdt_global_pca64.parquet",
+  "B1_gbdt_global_pca128": "outputs/p05_scenario_baselines/prediction_val_B1_gbdt_global_pca128.parquet",
+  "B2_scenario_stats": "outputs/p05_scenario_baselines/prediction_val_B2_scenario_stats.parquet",
+  "B3_scenario_gbdt": "outputs/p05_scenario_baselines/prediction_val_B3_scenario_gbdt.parquet"
+}

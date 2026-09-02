@@ -1,0 +1,27 @@
+# 官方竞赛数据属于非公开资料，任何情况下都不得进入本仓库
+input/WAYB_WAYC_*
+*proteome_raw*
+*metadata_train_val*
+*metadata_test*
+
+# 运行产物
+outputs/
+prediction.csv
+prediction_filtered_*.csv
+*.log
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+build/
+*.egg-info/
+
+# 环境与编辑器
+.venv/
+venv/
+.env
+.idea/
+.vscode/
+.DS_Store

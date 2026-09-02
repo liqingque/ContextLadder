@@ -1,0 +1,105 @@
+{
+  "schema": "goai-vc-external-source-manifest/1",
+  "generated_at": "2026-08-28T16:33:07.256271+00:00",
+  "final_model_external_inputs": [],
+  "final_model_note": "The final model consumes official sample metadata only (compound, strain, medium, source, instrument, plate, temperature, time). No entry below reaches inference.",
+  "prose_provenance": "external_data/RAW_SOURCES.md",
+  "entity_mapping": "external_data/entity_mapping.csv",
+  "test_derived_content": "none — no test proteome, matched-control truth or scoring result was used to generate, filter, normalise or calibrate any external feature",
+  "sources": [
+    {
+      "id": "yeast_1011_genomes",
+      "name": "1011 Yeast Genomes public matrices",
+      "citation": "Peter et al., Nature 2018",
+      "url": "https://www.nature.com/articles/s41586-018-0030-5",
+      "download_index": "http://1002genomes.u-strasbg.fr/files/",
+      "version": "1011 public isolates release",
+      "licence": "venue open-access terms; source-provider attribution retained",
+      "retrieved": "2026-08-13",
+      "entities_mapped": "5 competition strains matched exactly (BAH=SX3, BAI=BJ6, CEK=JCM_2985-4B, CGD=UCD_09-448, CRD=FIMA_3)",
+      "used_for": "G1 / G1R genome-feature falsification (negative result)",
+      "used_by_final_model": false,
+      "shipped_artifacts": [
+        "external_data/processed/strain_crosswalk_features.csv"
+      ],
+      "shipped_artifact_sha256": {
+        "external_data/processed/strain_crosswalk_features.csv": "122f262987c6857a6afdab00dd413669977946f47ac5845cca29ff186660892a"
+      }
+    },
+    {
+      "id": "ncbi_r64_s288c",
+      "name": "NCBI RefSeq S288C R64 assembly and annotation",
+      "url": "https://www.ncbi.nlm.nih.gov/datasets/genome/GCF_000146045.2/",
+      "version": "GCF_000146045.2 (R64)",
+      "licence": "NCBI public domain / attribution",
+      "retrieved": "2026-08-13",
+      "entities_mapped": "protein gene names; DHY210 explicitly flagged proxy_flag=1, never treated as an exact 1011 row",
+      "used_for": "protein sequence lookup for the ESM2 output-head experiment (negative result)",
+      "used_by_final_model": false,
+      "shipped_artifacts": [],
+      "shipped_artifact_sha256": {}
+    },
+    {
+      "id": "pubchem",
+      "name": "PubChem compound structures",
+      "url": "https://pubchem.ncbi.nlm.nih.gov/docs/pug-rest-tutorial",
+      "version": "PUG REST, retrieved 2026-08-10/11",
+      "licence": "PubChem public data terms",
+      "retrieved": "2026-08-11",
+      "entities_mapped": "57 compound labels: 49 MAPPED, 3 AMBIGUOUS, 4 UNMAPPED, 1 QC_EXCLUDED; no ambiguous label is guessed into a structure",
+      "used_for": "P3 / C1 / C1R chemical-feature falsification (negative result)",
+      "used_by_final_model": false,
+      "shipped_artifacts": [
+        "external_data/processed/compound_mapping_features.csv"
+      ],
+      "shipped_artifact_sha256": {
+        "external_data/processed/compound_mapping_features.csv": "1fbbe94099461986ed4efd614c549bdcce7f751f4ecae99ba54b90cc9a3a53d4"
+      }
+    },
+    {
+      "id": "pubmedbert_embeddings",
+      "name": "NeuML/pubmedbert-base-embeddings",
+      "url": "https://huggingface.co/NeuML/pubmedbert-base-embeddings",
+      "version": "revision b79526d6ef3645e0df4530322e266f24c829f5ef",
+      "licence": "open weights, per model card",
+      "retrieved": "2026-08-16",
+      "entities_mapped": "54 compounds x 768 dims; mean pooling over attention mask, no L2 normalisation, max_seq_length 512, fp32, CPU, one sequence at a time",
+      "used_for": "DCB-40 primary content channel phi_TXT (Gate-0 not passed; negative result)",
+      "used_by_final_model": false,
+      "preregistered": "model id and revision locked before any rho was computed; not chosen by comparing downstream results",
+      "abstention_rule": "compounds without substantive mechanism text get amplitude 0 (exact fallback); no mechanism is guessed",
+      "shipped_artifacts": [
+        "external_data/processed/compound_text_embeddings/embeddings.parquet",
+        "external_data/processed/compound_text_embeddings/manifest.json"
+      ],
+      "shipped_artifact_sha256": {
+        "external_data/processed/compound_text_embeddings/embeddings.parquet": "c373b32338226836f579a1a704e0ffc54b3bbb6d0f444e6cf5015de276816e8e",
+        "external_data/processed/compound_text_embeddings/manifest.json": "3457d4deda85d3f3116a585041126cecdcb74b2ac87884116b46c4f117a06293"
+      }
+    },
+    {
+      "id": "ssps_priors",
+      "name": "Structured mechanism priors (LLM-authored, cached)",
+      "version": "cached 2026-08-15",
+      "licence": "generated text, released with this package",
+      "retrieved": "2026-08-15",
+      "entities_mapped": "per-compound mechanism summaries; no proteome truth of any split is read by the generation step",
+      "used_for": "M3 / SSPS Gate-0 and the DCB-40 C2 ablation (both negative)",
+      "used_by_final_model": false,
+      "shipped_artifacts": [
+        "external_data/processed/ssps_priors/priors_R1.jsonl",
+        "external_data/processed/ssps_priors/priors_R2.jsonl",
+        "external_data/processed/ssps_priors/priors_R3.jsonl",
+        "external_data/processed/ssps_priors/priors_R4.jsonl",
+        "external_data/processed/ssps_priors/priors_R5.jsonl"
+      ],
+      "shipped_artifact_sha256": {
+        "external_data/processed/ssps_priors/priors_R1.jsonl": "38df282fc47bf131f47530d657dbac6ba3f4538d6e7c18c63f18c8fe2e7d3263",
+        "external_data/processed/ssps_priors/priors_R2.jsonl": "7d46984a32f8fceff3b7c30a79077eeccd5b3ddacd5d04ff01aed0e9330cb191",
+        "external_data/processed/ssps_priors/priors_R3.jsonl": "30071f6242e04ccc39225cec61e92111511a09241ae43ade3549a578609d2216",
+        "external_data/processed/ssps_priors/priors_R4.jsonl": "a90e3b5efcf2a48a711740674ce7de0b6fbb8b0411196ba593fa8da8909af6dc",
+        "external_data/processed/ssps_priors/priors_R5.jsonl": "ee699e44942cbf9932ed5cf9b470a366639d74e81c953e675d53890e829bd5d5"
+      }
+    }
+  ]
+}

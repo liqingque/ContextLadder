@@ -1,0 +1,129 @@
+{
+  "schema": "goai-vc-reproducibility-manifest/1",
+  "work_id": "TorchDragon_ContextLadder",
+  "work_name": "上下文阶梯 ContextLadder",
+  "team": "TorchDragon",
+  "final_model": "ContextLadder_HCCE_mask_compound_3seed",
+  "generated_at": "2026-09-01T17:51:30.066107+00:00",
+  "commands": {
+    "1_build_external_features": {
+      "command": "python scripts/build_embeddings.py --output artifacts/embeddings",
+      "required": false,
+      "note": "the final model uses no external features; this step can be skipped"
+    },
+    "2_train": {
+      "command": "python scripts/train.py --metadata <train_metadata> --proteome <train_proteome> --config configs/final.yaml --output-dir runs/final",
+      "required": true
+    },
+    "3_predict": {
+      "command": "python scripts/predict.py --metadata <test_metadata> --run-dir runs/final --output prediction.csv",
+      "required": true
+    },
+    "4_validate": {
+      "command": "python scripts/validate_submission.py --prediction prediction.csv --run-dir runs/final",
+      "required": false
+    }
+  },
+  "config": {
+    "file": "configs/final.yaml",
+    "sha256": "5a0503e25f411f7754709d14ce586f2e275be17cb0065278c3f3899cf36f8f6b"
+  },
+  "code_entry_points": {
+    "train.py": "23c79d550ea5fffc7c3fc5bcbcefe04c1155211322de242d57ebb308c2316217",
+    "predict.py": "ddaf21379dfe6af73e226e0a842ae567ee845f01e04cb1d4df9f2c3f5d8e4957",
+    "build_embeddings.py": "12b6fc5d57614f75a36055bffd57404cfc50b02131870919b6afcf83800881b5",
+    "validate_submission.py": "f450d7ec955f979cb498e3f9052fa7e1c36f2e074c5e9239a1e6e8c3cbad6bfe",
+    "run_hcce.py": "bdacb8ab20236e5399e50cbcb26e45e47009f14a301696db8d8a0cea44fb4c14",
+    "a2b_train_variants.py": "256cd5d83343a04f1fab9f77c711e7cfb9005c70bc3cbad2b369745bac7557e4"
+  },
+  "preprocessing": {
+    "contract_file": "runs/final/artifacts/preprocess_contract.json",
+    "protein_space": "contract_4422",
+    "n_proteins": 4422,
+    "protein_list_sha256": "ca5304274aebdffd5ef46410660525f13e08a71c516acd8a8be2431422adc34e",
+    "filter_rule": "drop proteins whose missing rate over split_final=='train' rows is >= threshold",
+    "filter_fit_scope": "split_final == 'train' only"
+  },
+  "run_dir": "runs/final",
+  "ensemble_members_root": "runs/final/  (checkpoint paths below are relative to this)",
+  "directory_layout": {
+    "note": "semantically equivalent to the recommended layout in IV.7; no duplicate copies are kept",
+    "recommended -> actual": {
+      "checkpoints/": "runs/final/checkpoints/",
+      "artifacts/": "runs/final/artifacts/",
+      "configs/final.yaml": "configs/final.yaml",
+      "scripts/{build_embeddings,train,predict,validate_submission}.py": "scripts/ (same names)",
+      "external_data/{source_manifest.json,entity_mapping.csv}": "external_data/ (same names)",
+      "tests/": "tests/",
+      "REPRODUCIBILITY_MANIFEST.json": "REPRODUCIBILITY_MANIFEST.json",
+      "LICENSES/": "LICENSES/"
+    }
+  },
+  "ensemble_members": [
+    {
+      "seed": 20260810,
+      "checkpoint": "checkpoints/seed20260810.pt",
+      "sha256": "4e56da3ce8b0c54483c8a4442552e9cc274b2c9052d2c6207ad61d1123ac3bdc",
+      "train_seconds": 35.37
+    },
+    {
+      "seed": 3407,
+      "checkpoint": "checkpoints/seed3407.pt",
+      "sha256": "3faed25d5451cc07294b1835cd8fca2317a5fa7e2ecefc361800830823ca413d",
+      "train_seconds": 34.46
+    },
+    {
+      "seed": 42,
+      "checkpoint": "checkpoints/seed42.pt",
+      "sha256": "00bdec0ba7f2379c2dbad3607f916355419ad8adb112e5cc920fcd4cbcb5d385",
+      "train_seconds": 28.79
+    }
+  ],
+  "ensemble_rule": {
+    "combine": "mean_of_member_predictions",
+    "expert_blend": {
+      "legacy_film": 0.5,
+      "hcce_film": 0.5
+    }
+  },
+  "prediction": {
+    "file": "prediction.csv",
+    "sha256": "59f99dc431aa5bd6dc5abb46a5390c64072fda505097cb9523b77198a502b17e",
+    "prediction_scale": "log2",
+    "n_rows": 4454,
+    "n_protein_columns": 4422
+  },
+  "data_boundary": {
+    "training_labels": "split_final == 'train' only",
+    "fit_rows": 5920,
+    "held_out_val_rows": 3038,
+    "validation_use": "model selection only",
+    "test_proteome_read": false,
+    "test_truth_read": false,
+    "assertion": "scripts/train.py aborts if any non-train row enters the fit index"
+  },
+  "external_data": {
+    "used_by_final_model": false,
+    "manifest": "external_data/source_manifest.json",
+    "entity_mapping": "external_data/entity_mapping.csv",
+    "prose": "external_data/RAW_SOURCES.md"
+  },
+  "environment": {
+    "python": "3.8.18",
+    "torch": "2.1.0",
+    "numpy": "1.24.3",
+    "device": "cuda",
+    "cuda": "11.8",
+    "platform": "Linux-6.8.0-136-generic-x86_64-with-glibc2.10"
+  },
+  "dependencies": {
+    "file": "requirements.txt",
+    "sha256": "bfc6a5e6a11f5025bb2f710195d53fa6ea5db7f5a3e086dc7de683b88cd196a3"
+  },
+  "known_limitations": [
+    "The semi-final submission specification states the standard modelling space is 4,422 proteins, and the stated rule (train-only missing rate < 0.80 over the 5,920 train rows) reproduces exactly that count, so the caliber is confirmed. What was not distributed is the feature contract FILE itself, so column ORDER is taken as the original train_val matrix order with dropped columns removed (first 1-Oct, last ZWF1); the list and its SHA256 ship in runs/final/artifacts/protein_list.txt. An earlier preliminary-round slide mentioned 4,232; that figure is superseded by the semi-final specification and is not reproducible from the released data under any variant of the stated rule that we tested.",
+    "GPU reductions are not bit-deterministic across different hardware; seeds, cuDNN deterministic mode and benchmark=False are fixed, so a rerun on the same hardware reproduces the artifact, while different hardware may differ in the last digits.",
+    "The final model contributes no compound-specific signal on unseen compounds; this is measured, not assumed (see 方案说明文档 §四 and §七)."
+  ],
+  "contact": "TorchDragon — 负责人 李晓蒙（方法与实现）/ 徐逸飞（生物建模）；联系方式随赛事提交材料提供，未在公开仓库披露"
+}

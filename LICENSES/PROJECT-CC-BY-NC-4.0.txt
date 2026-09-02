@@ -1,0 +1,23 @@
+Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)
+
+Copyright (c) 2026 Team TorchDragon（李晓蒙、徐逸飞）
+
+This work is licensed under the Creative Commons Attribution-NonCommercial 4.0
+International License. To view a copy of this license, visit:
+https://creativecommons.org/licenses/by-nc/4.0/legalcode
+
+You are free to:
+  Share  — copy and redistribute the material in any medium or format
+  Adapt  — remix, transform, and build upon the material
+
+Under the following terms:
+  Attribution   — You must give appropriate credit, provide a link to the
+                  license, and indicate if changes were made.
+  NonCommercial — You may not use the material for commercial purposes.
+
+No additional restrictions — You may not apply legal terms or technological
+measures that legally restrict others from doing anything the license permits.
+
+说明：本许可证仅覆盖本代码包内的自研代码、配置与文档。官方竞赛数据
+（configs/data_paths.yaml 指向的官方原始数据文件）不随本代码包分发，其
+使用权限以 GOAI 世界人工智能开源大赛组委会《参与者协议》为准，不适用本许可证。

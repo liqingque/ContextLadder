@@ -1,0 +1,60 @@
+{
+  "phase": "P3",
+  "frozen_at": "2026-08-27",
+  "frozen_before_data_access": true,
+  "levers": ["R3A capacity/training-budget grid", "R3B EMA", "R3C cross-architecture blend"],
+  "gate": "Gate-W (verbatim reuse of configs/p1_gates.json; no threshold moved)",
+  "W": "0.20*absPCC + 0.25*FC_all + 0.20*S1 + 0.20*S2 + 0.10*S3FC + 0.05*DEPacc",
+  "W_note": "The official evaluator emits no separate val_time module; per the 2026-08-26 P1 caliber correction the 10% slot is filled by S3 FC alone and this substitution is recorded, never silently replaced by another stratum.",
+  "baseline": {
+    "name": "mask_compound_3seed_base",
+    "parquet": "outputs/r1_convex_mix_3seed/prediction_val_mean50_3seed.parquet",
+    "rmse": 0.420258878,
+    "W": 0.521834,
+    "absPCC": 0.988598,
+    "FC_all": 0.491355,
+    "S1_official_plate": 0.203387,
+    "S2": 0.407705,
+    "S3FC": 0.344605,
+    "DEPacc": 0.891936
+  },
+  "bootstrap": {
+    "type": "paired cluster bootstrap",
+    "clusters": "6 unseen compounds + 1 unseen strain BAI = 7 clusters",
+    "replicates": 2000
+  },
+  "official_context_granularity": "official_plate",
+  "conditions": [
+    "dW 95% CI does not include 0",
+    "dW >= +0.010",
+    "no module has negative delta with CI excluding 0",
+    "dW_noS2 must also pass; if dW passes but dW_noS2 does not, NOT ADOPTED",
+    "dRMSE <= -0.001"
+  ],
+  "floor_provenance": "+0.010 = frozen S1 effect floor 0.053 (6 clusters, cluster-bootstrap SD 0.0265) x official module weight 0.20. Carried over unchanged from P1. Never to be lowered.",
+  "gate_z_zero_information": {
+    "new_in_P3": true,
+    "rationale": "Standing project position since 2026-08-16: an S1 gain produced by re-weighting the shared -y_control term carries zero compound information and must not enter the submission (this is why R1 convex mixing is never adopted).",
+    "rule": "For any candidate, run scripts/compound_invariance_check.py. If the candidate is compound-invariant (cross-compound prediction pairs bitwise identical within a context) AND the S1 term contributes more than 50% of its dW, the candidate is NOT ADOPTED and is reported as a zero-information control.",
+    "frozen_before_results": true
+  },
+  "gate_r1_free": {
+    "rule": "No P3 candidate may contain R1 convex control mixing. Any RAP component must be the r1-free variant, asserted by reading r1.weight from the run_config.yaml of every contributing run and by parquet identity check against metrics.json.",
+    "provenance": "M1 rejected w>=0.30 under the dual-granularity rule; the P1-evaluated RAP-R4 candidate was rap_r4_hybrid_r1_mix with r1.weight=0.30 and is therefore excluded from P3 as a component."
+  },
+  "selection_rules": {
+    "R3A_screen_metric": "3-seed ensemble validation log2 RMSE (n=3038)",
+    "R3A_advance_rule": "the 3 configs with the lowest 3-seed ensemble RMSE, plus COMBO, are evaluated on the official evaluator; all configs are reported",
+    "R3A_combo_rule": "COMBO = the coordinatewise argmin level on each of the three axes (epochs, embedding_dim, mask_p) by 3-seed ensemble RMSE. If all three argmins are the base level, COMBO is skipped and recorded as skipped.",
+    "R3B_grid": "ema_decay in {0.99, 0.995, 0.999}, base config (40 epochs, dim 64, mask_p 0.25), seeds {20260810, 3407, 42}",
+    "R3C_primary": "C1 global convex blend at w = 0.50 is the single pre-declared primary candidate; C0 and all other w values are reported as an exploratory curve and are not adoptable on their own"
+  },
+  "hard_constraints": [
+    "split_final frozen; fit only on split_final == train (5,920 rows)",
+    "validation used for model selection only, never for fitting any statistic",
+    "test truth is never read",
+    "scripts/evaluate_official_modules.py must not be edited",
+    "Goai_TorchDragon/ and submission_package/ must not be modified in P3",
+    "no threshold in this file may be changed after any P3 result is seen"
+  ]
+}

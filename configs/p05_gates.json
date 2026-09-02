@@ -1,0 +1,60 @@
+{
+  "phase": "P0.5",
+  "frozen_date": "2026-08-26",
+  "gate_name": "Gate-W",
+  "official_weights": {
+    "absPCC": 0.20,
+    "FC_all": 0.25,
+    "S1": 0.20,
+    "S2": 0.20,
+    "timeFC_S3FC_mean": 0.10,
+    "DEPacc": 0.05
+  },
+  "gate_w_conditions": {
+    "paired_cluster_bootstrap": {
+      "unit": "held_out_entity",
+      "clusters": [
+        "held_out_compound_1",
+        "held_out_compound_2",
+        "held_out_compound_3",
+        "held_out_compound_4",
+        "held_out_compound_5",
+        "held_out_compound_6",
+        "held_out_strain_BAI"
+      ],
+      "cluster_count": 7,
+      "replicates": 2000,
+      "paired": true,
+      "confidence_level": 0.95
+    },
+    "delta_w_ci_excludes_zero": true,
+    "delta_w_minimum": 0.010,
+    "no_significant_negative_module_delta": true,
+    "delta_w_noS2_required": true,
+    "delta_w_noS2_must_pass": true
+  },
+  "candidate_plan": {
+    "baseline_name": "mask_compound_3seed_base",
+    "baseline_prediction": "outputs/r1_convex_mix_3seed/prediction_val_mean50_3seed.parquet",
+    "candidates": [
+      "B1_gbdt_global_pca64",
+      "B1_gbdt_global_pca128",
+      "B2_scenario_stats",
+      "B3_scenario_gbdt"
+    ],
+    "b1_seeds": [20260810, 3407, 42],
+    "b3_seeds": [20260810, 3407, 42],
+    "pca_ranks": [64, 128],
+    "official_plate_only_for_conclusions": true
+  },
+  "compound_permutation_null": {
+    "count": 200,
+    "unit": "compound",
+    "paired_with_s1_evaluation": true,
+    "prespecified_before_data_access": true
+  },
+  "stopping": {
+    "adopt_only_if_gate_w_and_delta_w_noS2_pass": true,
+    "negative_categories": ["INFORMATIVE NEGATIVE", "FLAT"]
+  }
+}

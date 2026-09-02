@@ -1,0 +1,10 @@
+{
+  "mask_compound_3seed_base": "outputs/r1_convex_mix_3seed/prediction_val_mean50_3seed.parquet",
+  "mask_compound_5seed": "outputs/m1_candidates/mask_compound_5seed/prediction_val_mean50_mask_compound_5seed.parquet",
+  "r1_convex_w005": "outputs/r1_convex_mix_3seed/prediction_val_mean50_3seed_r1_w005.parquet",
+  "r1_convex_w010": "outputs/r1_convex_mix_3seed/prediction_val_mean50_3seed_r1_w010.parquet",
+  "eb_calibrated_3seed": "outputs/m1_candidates/prediction_val_eb_calibrated_3seed.parquet",
+  "film_3seed": "outputs/m1_candidates/prediction_val_film_3seed.parquet",
+  "hcce_mean50_3seed": "outputs/m1_candidates/prediction_val_hcce_mean50_3seed.parquet",
+  "ca_hcce_3seed": "outputs/m1_candidates/prediction_val_ca_hcce_3seed.parquet"
+}

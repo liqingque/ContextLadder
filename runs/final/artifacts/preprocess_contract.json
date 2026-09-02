@@ -1,0 +1,18 @@
+{
+  "protein_space": "contract_4422",
+  "n_proteins": 4422,
+  "protein_list_file": "artifacts/protein_list.txt",
+  "protein_list_sha256": "ca5304274aebdffd5ef46410660525f13e08a71c516acd8a8be2431422adc34e",
+  "filter_rule": "drop proteins whose missing rate over split_final=='train' rows is >= threshold",
+  "filter_threshold": 0.8,
+  "filter_fit_scope": "split_final == 'train' only",
+  "n_raw_protein_columns": 5243,
+  "n_dropped": 821,
+  "fit_rows": 5920,
+  "held_out_val_rows": 3038,
+  "total_train_val_rows": 8958,
+  "target_space": "log2(raw)",
+  "global_train_mean": 21.52219110968594,
+  "test_proteome_read": false,
+  "test_metadata_read": false
+}

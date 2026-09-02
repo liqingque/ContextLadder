@@ -1,0 +1,24 @@
+{
+  "external_features_used_by_final_model": false,
+  "action_required": "none — this step can be skipped entirely",
+  "final_model_inputs": [
+    "compound (categorical)",
+    "strain (categorical)",
+    "medium (categorical)",
+    "data_source (categorical)",
+    "instrument (categorical)",
+    "plate (categorical)",
+    "temperature (numeric)",
+    "perturbation time (numeric, + log-time + 5 RBF bases)"
+  ],
+  "external_resources_in_prediction_path": [],
+  "external_resources_used_in_falsification_experiments_only": {
+    "see": [
+      "external_data/RAW_SOURCES.md",
+      "external_data/source_manifest.json"
+    ],
+    "note": "reported in 方案说明文档 §七; all negative; none enters inference"
+  },
+  "test_derived_inputs": null,
+  "generated_at": "2026-08-29T15:56:06.654811+00:00"
+}

@@ -1,0 +1,18 @@
+provider: local
+environment: tl
+python: 3.8.18
+packages:
+  torch: 2.1.0
+  torchvision: 0.16.0
+  numpy: 1.24.3
+  pandas: 2.0.3
+  scikit-learn: 1.2.2
+  rdkit: 2024.03.5
+resource:
+  gpu: NVIDIA GeForce RTX 3090
+  gpu_count: 1
+  cuda_available: true
+smoke:
+  imports: [torch, rdkit, pandas, sklearn]
+  seeded_cuda_witness: "torch.manual_seed(20260811); x=torch.randn(8,8,device='cuda'); print('WITNESS',(x@x).shape,torch.cuda.get_device_name(0))"
+  rdkit_parse: "Chem.MolToSmiles(Chem.MolFromSmiles('CCO')) == 'CCO'"

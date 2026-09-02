@@ -1,0 +1,28 @@
+{
+  "first_column_is_sample_id": true,
+  "n_rows": 4454,
+  "n_rows_ok": true,
+  "n_protein_columns": 4422,
+  "n_protein_columns_ok": true,
+  "sample_ids_unique": true,
+  "no_duplicate_columns": true,
+  "sample_order_matches_test_metadata": true,
+  "all_values_finite": true,
+  "no_nan": true,
+  "protein_order_matches_contract": true,
+  "value_range": [
+    10.853936,
+    34.5014
+  ],
+  "looks_like_log2_not_zscore": true,
+  "sha256": "59f99dc431aa5bd6dc5abb46a5390c64072fda505097cb9523b77198a502b17e",
+  "verdict": "PASS",
+  "failed_checks": [],
+  "skipped_checks": [],
+  "data_boundary": {
+    "fit_rows": 5920,
+    "held_out_val_rows": 3038,
+    "filter_fit_scope": "split_final == 'train' only",
+    "test_proteome_read": false
+  }
+}

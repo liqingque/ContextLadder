@@ -1,0 +1,107 @@
+{
+  "frozen_at": "2026-08-16",
+  "frozen_by": "scripts/dcb_power_sim.py (R001)",
+  "status": "DELTA_SELECTED",
+  "delta": 0.05,
+  "delta_grid": [
+    0.05,
+    0.075,
+    0.1,
+    0.125,
+    0.15,
+    0.175,
+    0.2
+  ],
+  "delta_cap": 0.2,
+  "gate0_bar_rho": 0.2,
+  "gate1_effect_floor": 0.053,
+  "gate1_rule": "paired cluster-bootstrap CI excludes 0 AND point estimate >= 0.053 AND both mu_ctx granularities same sign AND abs/FC/S2 not degraded",
+  "n_clusters_gate0": 37,
+  "cluster_field": "held-out compound (37 train compounds with mechanism text)",
+  "bootstrap_reps": 2000,
+  "permutation_reps": 200,
+  "oracle_k_ladder": [
+    1,
+    2,
+    3,
+    5,
+    10,
+    20,
+    36
+  ],
+  "oracle_k_full_span": 36,
+  "k_full_span_note": "fit set = 36 other non-control compounds, so the full linear span is k=36 (the plan's 39 assumed 40 compounds incl. the 3 vehicle controls, which carry no mechanism text)",
+  "q_max": 10,
+  "capacity_rule": {
+    "cum_var_min": 0.6,
+    "folds_min": 35,
+    "split_half_cos_min": 0.99,
+    "note": "35/37 folds; k=full span exempt, never carries a PASS"
+  },
+  "E1_elimination": {
+    "condition_number_max": 100,
+    "effective_rank_min_is_q": true,
+    "sole_elimination_gate": true
+  },
+  "beta_norm": {
+    "role": "diagnostic only",
+    "never_eliminates": true,
+    "null_reps": 200,
+    "double_report": true,
+    "primary_analysis": "full set (no exclusion)"
+  },
+  "channels": {
+    "phi_TXT": {
+      "role": "primary content channel",
+      "gate1_eligible": true,
+      "model": "NeuML/pubmedbert-base-embeddings",
+      "revision": "b79526d6ef3645e0df4530322e266f24c829f5ef",
+      "artifact": "external_data/processed/compound_text_embeddings/embeddings.parquet",
+      "artifact_sha256": "c373b32338226836f579a1a704e0ffc54b3bbb6d0f444e6cf5015de276816e8e"
+    },
+    "phi_SSPS": {
+      "role": "C2 decoder ablation feature",
+      "gate1_eligible": false
+    },
+    "tanimoto": {
+      "role": "construction control (closed content channel)",
+      "gate1_eligible": false
+    },
+    "random": {
+      "role": "negative control",
+      "gate1_eligible": false
+    }
+  },
+  "abstention_rule": "compounds without substantive mechanism text get a = 0 (exact fallback); no mechanism is guessed",
+  "abstained_compounds": [
+    "DMSO",
+    "Water",
+    "Quality Control",
+    "Abietic acid",
+    "Pentamidine isethionate"
+  ],
+  "outcomes": {
+    "i_PASS": "rho_bar >= 0.20 AND cluster-bootstrap CI low > delta",
+    "ii_SPAN_CLOSED": "one-sided 95% upper bound of rho_oracle(k=36) < 0.20; wording restricted to linear transfer from the fit-set span",
+    "iii_REPRESENTATION_GAP": "every eligible channel CI high < delta AND no channel point estimate > delta/2",
+    "iv_INDETERMINATE": "anything else -- explicitly NOT a contribution",
+    "v_UNDERPOWERED": "no delta under the cap reaches P(REP GAP | rho=0) >= 0.80 -- explicitly NOT a contribution"
+  },
+  "discipline": {
+    "split_final": "frozen",
+    "fitting_data": "split_final=train only",
+    "val_use": "Gate-1 only",
+    "test_truth": "never read",
+    "post_data_threshold_moves": "forbidden; any move voids all conclusions"
+  },
+  "power_sim": {
+    "artifact": "outputs/dcb40/power_sim/power_sim.json",
+    "sha256": "e844fea05ff61db6bf6ba03fe0339b8ff083f628f7ad098f7dcf5bf4a66a37e4",
+    "script_sha256": "b359206e81d42bae158f37f93508e87d40505fc9358489f51ee1e0095e526f60",
+    "env_snapshot": "outputs/dcb40/power_sim/ENV_SNAPSHOT.txt",
+    "seed": 20260816,
+    "python": "3.8.18",
+    "platform": "Linux-6.8.0-136-generic-x86_64-with-glibc2.10"
+  },
+  "maxT_95_critical_abs": 0.012203560848640497
+}

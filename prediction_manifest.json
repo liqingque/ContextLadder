@@ -1,0 +1,32 @@
+{
+  "prediction_file": "prediction.csv",
+  "prediction_sha256": "59f99dc431aa5bd6dc5abb46a5390c64072fda505097cb9523b77198a502b17e",
+  "prediction_scale": "log2",
+  "protein_space": "contract_4422",
+  "n_rows": 4454,
+  "n_protein_columns": 4422,
+  "sample_id_column": "sample_ID",
+  "sample_ids_unique": true,
+  "sample_order_matches_test_metadata": true,
+  "all_values_finite": true,
+  "run_id": "ContextLadder_HCCE_mask_compound_3seed",
+  "config_sha256": "5a0503e25f411f7754709d14ce586f2e275be17cb0065278c3f3899cf36f8f6b",
+  "protein_list_sha256": "ca5304274aebdffd5ef46410660525f13e08a71c516acd8a8be2431422adc34e",
+  "ensemble_members": [
+    {
+      "seed": 20260810,
+      "checkpoint_sha256": "4e56da3ce8b0c54483c8a4442552e9cc274b2c9052d2c6207ad61d1123ac3bdc"
+    },
+    {
+      "seed": 3407,
+      "checkpoint_sha256": "3faed25d5451cc07294b1835cd8fca2317a5fa7e2ecefc361800830823ca413d"
+    },
+    {
+      "seed": 42,
+      "checkpoint_sha256": "00bdec0ba7f2379c2dbad3607f916355419ad8adb112e5cc920fcd4cbcb5d385"
+    }
+  ],
+  "test_proteome_read": false,
+  "test_truth_read": false,
+  "elapsed_sec": 16.67
+}

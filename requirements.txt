@@ -1,0 +1,20 @@
+# GOAI 虚拟细胞方向 复赛代码包 —— 运行依赖（pip 可安装的精简锁定版本）
+# 完整环境快照见 requirements_tl_snapshot.txt（conda 导出，仅供环境对照，不用于安装）
+# Python 3.8.18；版本与 configs/env-spec.yaml 一致，已在 2026-08-27 复现核验中逐条比对。
+torch==2.1.0
+numpy==1.24.3
+pandas==2.0.3
+scikit-learn==1.2.2
+joblib==1.4.2
+matplotlib==3.7.0
+PyYAML==6.0.2
+# 分析侧脚本（evaluate_official_modules / compound_invariance_check / gate_w_summary /
+# dcb_*）读写 parquet，src/mosaic/contracts.py 在模块层 import pyarrow。
+# 只跑最终提交入口 make_mask_compound_3seed_submission.py 不需要它，但复现审核若要重跑
+# 官方口径评估或不变性检查则必须安装。
+pyarrow==17.0.0
+scipy==1.10.1
+
+# 可选：仅 scripts/dcb_loco_harness.py 的 Tanimoto 对照通道用到，且为函数内延迟导入；
+# 不安装不影响其余任何脚本，也不影响最终提交入口。
+# rdkit==2024.03.5

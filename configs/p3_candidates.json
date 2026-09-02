@@ -1,0 +1,13 @@
+{
+  "mask_compound_3seed_base": "outputs/r1_convex_mix_3seed/prediction_val_mean50_3seed.parquet",
+  "R3A_ep60_3seed": "outputs/p3_capacity/ep60/ensemble/prediction_val_mean50_ep60_3seed.parquet",
+  "R3A_ep120_3seed": "outputs/p3_capacity/ep120/ensemble/prediction_val_mean50_ep120_3seed.parquet",
+  "R3A_mp040_3seed": "outputs/p3_capacity/mp040/ensemble/prediction_val_mean50_mp040_3seed.parquet",
+  "R3A_combo_3seed": "outputs/p3_capacity/combo/ensemble/prediction_val_mean50_combo_3seed.parquet",
+  "R3B_ema_d99_3seed": "outputs/p3_ema/d99/ensemble/prediction_val_mean50_ema_d99_3seed.parquet",
+  "R3C_C0": "outputs/p3_blend/prediction_val_C0.parquet",
+  "R3C_C1_w25": "outputs/p3_blend/prediction_val_C1_w25.parquet",
+  "R3C_C1_w50": "outputs/p3_blend/prediction_val_C1_w50.parquet",
+  "R3C_C1_w75": "outputs/p3_blend/prediction_val_C1_w75.parquet",
+  "R3C_C2_rowscoped": "outputs/p3_blend/prediction_val_C2_rowscoped.parquet"
+}

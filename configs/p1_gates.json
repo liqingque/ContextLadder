@@ -1,0 +1,19 @@
+{
+  "phase": "P1",
+  "gate": "Gate-W",
+  "W": "0.20*absPCC + 0.25*FC_all + 0.20*S1 + 0.20*S2 + 0.10*(0.5*timeFC + 0.5*S3FC) + 0.05*DEPacc",
+  "bootstrap": {
+    "type": "paired cluster bootstrap",
+    "clusters": "6 unseen compounds + 1 unseen strain BAI = 7 clusters",
+    "replicates": 2000
+  },
+  "conditions": [
+    "ΔW 95% CI does not include 0",
+    "ΔW >= +0.010",
+    "no module has negative Δ with CI excluding 0",
+    "ΔW_noS2 must also pass; if ΔW passes but ΔW_noS2 does not, NOT ADOPTED",
+    "ΔRMSE <= -0.001"
+  ],
+  "official_context_granularity": "official_plate",
+  "frozen_before_data_access": true
+}

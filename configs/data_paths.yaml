@@ -1,0 +1,9 @@
+# 官方原始数据路径（相对代码包根目录）。
+# 数据属于非公开资料，不随代码包分发；请按 input/README.md 的说明放置后再运行。
+# proteome_test 仅供包内唯一的独立审计工具 scripts/p0_audit_data.py 使用，该工具不在复现链路上。
+# 提交路径从不读取它（全部出现位置见包根 TEST_TRUTH_ACCESS.md）：
+# scripts/train.py 只读 train_val，scripts/predict.py 只读 test metadata。
+metadata_train_val: input/WAYB_WAYC_metadata_train_val(1).csv
+proteome_train_val: input/WAYB_WAYC_proteome_raw_train_val.csv
+metadata_test: input/WAYB_WAYC_metadata_test(1).csv
+proteome_test: input/WAYB_WAYC_proteome_raw_test.csv

@@ -1,0 +1,39 @@
+sample_id: sample_ID
+split: split_final
+strain: Strains
+compound: perturbation_no_concentration
+compound_id: pert_id
+medium: Medium
+temperature: Temperature
+time: pert_time
+time_unit: pert_time_unit
+source: data_source
+instrument: instrument
+plate: Yeast_cell_plate
+protein_well: protein_well
+strain_role: strain_role
+chemical_role: chemical_role
+qc_label: Quality Control
+control_labels:
+  - DMSO
+  - Water
+feature_groups:
+  biological:
+    - strain
+    - compound
+    - medium
+    - temperature
+    - time
+  measurement:
+    - source
+    - instrument
+    - plate
+  full:
+    - strain
+    - compound
+    - medium
+    - temperature
+    - time
+    - source
+    - instrument
+    - plate
