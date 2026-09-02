@@ -4,6 +4,8 @@
 <img src="对名含义.png" alt="TorchDragon · 以智能之火，照亮未知" width="100%"/>
 </p>
 
+<p align="center"><strong>TorchDragon — Illuminate the Unknown.<br>烛龙——以智能之火，照亮未知。</strong></p>
+
 **GOAI 赛道三 · 虚拟细胞方向 · 复赛提交包**
 作品全称：上下文阶梯——面向未见扰动与未见菌株的虚拟酵母蛋白组预测
 技术代号：HCCE-Proteome ｜ 团队：TorchDragon
