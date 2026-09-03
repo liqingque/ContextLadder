@@ -5,6 +5,15 @@
 </p>
 
 <p align="center"><strong>TorchDragon — Illuminate the Unknown.<br>烛龙——以智能之火，照亮未知。</strong></p>
+## 名字的含义
+
+<p align="center">
+<img src="队徽.png" alt="TorchDragon 队徽" width="180"/>
+</p>
+
+**TorchDragon — Illuminate the Unknown.**
+**烛龙——以智能之火，照亮未知。**
+TorchDragon 源于中国神话「烛龙」。传说烛龙以目照彻幽暗，而在人工智能中，我们希望以算法为目、以计算为炬，从数据中洞察规律。Torch 同时呼应 PyTorch，Dragon 则承载中国神话意象。TorchDragon 因此代表「以智能之火，照亮未知」。
 
 **GOAI 赛道三 · 虚拟细胞方向 · 复赛提交包**
 作品全称：上下文阶梯——面向未见扰动与未见菌株的虚拟酵母蛋白组预测
