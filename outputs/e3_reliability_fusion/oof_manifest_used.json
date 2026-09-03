@@ -1,0 +1,9 @@
+{
+  "manifest": "/data/LXM/VC/outputs/grouped_ood/split_manifest.json",
+  "variant": "mask_compound",
+  "embedding_dim": 64,
+  "epochs": 40,
+  "seed": 20260810,
+  "n_rows": 23680,
+  "elapsed_sec": 763.0514206886292
+}

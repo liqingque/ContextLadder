@@ -1,0 +1,6 @@
+{
+  "gates_config": "/data/LXM/VC/configs/e1_unknown_fallback_gates.yaml",
+  "sha256": "7a3a09f78128282aff232a2a563b56e9c9d9e2232d967100a8dad440858be09b",
+  "recorded_at_unix": 1788420408.5269392,
+  "recorded_before_any_training": true
+}

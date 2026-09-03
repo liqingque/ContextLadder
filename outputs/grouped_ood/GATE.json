@@ -1,0 +1,44 @@
+{
+  "protocol": "E2 train-internal four-axis grouped pseudo-OOD",
+  "data_boundary_ok": true,
+  "n_train_rows": 5920,
+  "leakage_assertions": {
+    "n_assertions": 32,
+    "all_pass": true
+  },
+  "fold_count_contract": {
+    "plate": {
+      "expected": 12,
+      "actual": 12,
+      "pass": true
+    },
+    "strain": {
+      "expected": 4,
+      "actual": 4,
+      "pass": true
+    },
+    "compound": {
+      "expected": 10,
+      "actual": 10,
+      "pass": true
+    },
+    "time": {
+      "expected": 6,
+      "actual": 6,
+      "pass": true
+    }
+  },
+  "fold_count_contract_pass": true,
+  "candidates_evaluated": [
+    "mask_compound"
+  ],
+  "evaluation_completed_all_axes": true,
+  "low_power_axes": {
+    "strain": {
+      "n_entities": 4,
+      "warning": "Only 4 strain entities in split_final=='train' (BAH, CEK, DHY210, CGD); leave-one-strain-out therefore has 4 folds total. Any strain-axis macro metric or bootstrap CI here reflects n=4 clusters and has very limited statistical power -- it can rule out large regressions but cannot resolve small deltas between candidates. This mirrors, but does partially relieve, the single-unseen-strain limitation of the official validation split."
+    }
+  },
+  "scope_note": "This GATE reports whether the E2 protocol itself was constructed and executed correctly (no leakage, correct fold contract, baseline evaluated on all four axes). It is NOT a model-selection gate and does NOT authorize replacing any frozen competition prediction; see E2_REPORT.md limitations section.",
+  "overall_pass": true
+}

@@ -25,3 +25,18 @@ venv/
 .idea/
 .vscode/
 .DS_Store
+
+# 例外：三个预注册实验（E1/E2/E3）的报告与指标随仓库分发，
+# 训练中间产物（checkpoint / OOF 原始数组）仍被上面的 outputs/ 规则挡住。
+!outputs/
+outputs/*
+!outputs/e1_unknown_fallback/
+!outputs/grouped_ood/
+!outputs/grouped_ood_seed3407/
+!outputs/grouped_ood_seed42/
+!outputs/e1_grouped_ood/
+!outputs/e3_reliability_fusion/
+outputs/*/*/
+outputs/**/*.pt
+outputs/**/*.npy
+outputs/**/*.parquet

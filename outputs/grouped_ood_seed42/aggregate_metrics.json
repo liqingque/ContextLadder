@@ -1,0 +1,189 @@
+{
+  "mask_compound": {
+    "seed": 42,
+    "epochs": 40,
+    "embedding_dim": 64,
+    "axes_evaluated": [
+      "plate",
+      "strain",
+      "compound",
+      "time"
+    ],
+    "n_bootstrap": 2000,
+    "elapsed_sec": 922.7384603023529,
+    "aggregate": {
+      "plate": {
+        "n_entities": 144,
+        "n_folds": 12,
+        "total_test_rows": 5920,
+        "sample_pcc": {
+          "entity_macro": 0.9900762267345371,
+          "mean": 0.9900762267345371,
+          "ci_lo": 0.9891005687212788,
+          "ci_hi": 0.9909924134799039,
+          "n_entities": 144,
+          "n_boot": 2000
+        },
+        "log2_rmse": {
+          "entity_macro": 0.38118098955822394,
+          "mean": 0.38118098955822394,
+          "ci_lo": 0.3654383956594402,
+          "ci_hi": 0.3984012716642267,
+          "n_entities": 144,
+          "n_boot": 2000
+        },
+        "log2_mae": {
+          "entity_macro": 0.2661258647954502,
+          "mean": 0.2661258647954502,
+          "ci_lo": 0.25371603696427786,
+          "ci_hi": 0.279543728089147,
+          "n_entities": 144,
+          "n_boot": 2000
+        },
+        "unknown_vs_known": {
+          "definition": "'known' here is the IN-SAMPLE fit metric of the same fold-trained model evaluated on its own fold-train rows (entities it was fit on); it is an optimistic upper bound on true known-entity generalization, not a held-out known-entity estimate (that would need nested/double CV, out of scope for this first pass). 'unknown' is the true held-out fold-test metric.",
+          "unknown_macro_pcc": 0.9900926469615344,
+          "known_in_sample_macro_pcc": 0.9945057224254201,
+          "gap_pcc_known_minus_unknown": 0.004413075463885696,
+          "unknown_macro_rmse": 0.3890490441646269,
+          "known_in_sample_macro_rmse": 0.28496827269786484,
+          "gap_rmse_unknown_minus_known": 0.10408077146676203
+        },
+        "matched_control_fc": {
+          "mean_fc_pcc": null,
+          "mean_coverage": 0.0,
+          "note": "coverage collapses toward 0 for the plate/strain/time axes because match_controls requires an exact context match (including plate/strain/time), and that context is exactly what the fold removes from the legal (fold-train) control pool; compound is the axis where matched-control FC is actually informative."
+        }
+      },
+      "strain": {
+        "n_entities": 4,
+        "n_folds": 4,
+        "total_test_rows": 5920,
+        "sample_pcc": {
+          "entity_macro": 0.9759034936771068,
+          "mean": 0.9759034936771068,
+          "ci_lo": 0.9726586891302849,
+          "ci_hi": 0.9794498187939928,
+          "n_entities": 4,
+          "n_boot": 2000
+        },
+        "log2_rmse": {
+          "entity_macro": 0.6045477889718506,
+          "mean": 0.6045477889718506,
+          "ci_lo": 0.5519080269270111,
+          "ci_hi": 0.6449708320118905,
+          "n_entities": 4,
+          "n_boot": 2000
+        },
+        "log2_mae": {
+          "entity_macro": 0.404889321372541,
+          "mean": 0.404889321372541,
+          "ci_lo": 0.37105281296602355,
+          "ci_hi": 0.43475450535299864,
+          "n_entities": 4,
+          "n_boot": 2000
+        },
+        "unknown_vs_known": {
+          "definition": "'known' here is the IN-SAMPLE fit metric of the same fold-trained model evaluated on its own fold-train rows (entities it was fit on); it is an optimistic upper bound on true known-entity generalization, not a held-out known-entity estimate (that would need nested/double CV, out of scope for this first pass). 'unknown' is the true held-out fold-test metric.",
+          "unknown_macro_pcc": 0.9759034936771068,
+          "known_in_sample_macro_pcc": 0.9944895768719352,
+          "gap_pcc_known_minus_unknown": 0.01858608319482835,
+          "unknown_macro_rmse": 0.6045477889718506,
+          "known_in_sample_macro_rmse": 0.28579506508437835,
+          "gap_rmse_unknown_minus_known": 0.3187527238874722
+        },
+        "matched_control_fc": {
+          "mean_fc_pcc": null,
+          "mean_coverage": 0.0,
+          "note": "coverage collapses toward 0 for the plate/strain/time axes because match_controls requires an exact context match (including plate/strain/time), and that context is exactly what the fold removes from the legal (fold-train) control pool; compound is the axis where matched-control FC is actually informative."
+        }
+      },
+      "compound": {
+        "n_entities": 40,
+        "n_folds": 10,
+        "total_test_rows": 5920,
+        "sample_pcc": {
+          "entity_macro": 0.9879771182456075,
+          "mean": 0.9879771182456075,
+          "ci_lo": 0.983773427223573,
+          "ci_hi": 0.9915893117074057,
+          "n_entities": 40,
+          "n_boot": 2000
+        },
+        "log2_rmse": {
+          "entity_macro": 0.38738857702491114,
+          "mean": 0.38738857702491114,
+          "ci_lo": 0.3464744962987337,
+          "ci_hi": 0.4349297886496482,
+          "n_entities": 40,
+          "n_boot": 2000
+        },
+        "log2_mae": {
+          "entity_macro": 0.2638569382638814,
+          "mean": 0.2638569382638814,
+          "ci_lo": 0.23724788663165397,
+          "ci_hi": 0.2949671803351899,
+          "n_entities": 40,
+          "n_boot": 2000
+        },
+        "unknown_vs_known": {
+          "definition": "'known' here is the IN-SAMPLE fit metric of the same fold-trained model evaluated on its own fold-train rows (entities it was fit on); it is an optimistic upper bound on true known-entity generalization, not a held-out known-entity estimate (that would need nested/double CV, out of scope for this first pass). 'unknown' is the true held-out fold-test metric.",
+          "unknown_macro_pcc": 0.990257569998964,
+          "known_in_sample_macro_pcc": 0.9944834658375022,
+          "gap_pcc_known_minus_unknown": 0.004225895838538274,
+          "unknown_macro_rmse": 0.36440213821565226,
+          "known_in_sample_macro_rmse": 0.28558851047786404,
+          "gap_rmse_unknown_minus_known": 0.07881362773778822
+        },
+        "matched_control_fc": {
+          "mean_fc_pcc": 0.5698458818630355,
+          "mean_coverage": 0.9901659964351287,
+          "note": "coverage collapses toward 0 for the plate/strain/time axes because match_controls requires an exact context match (including plate/strain/time), and that context is exactly what the fold removes from the legal (fold-train) control pool; compound is the axis where matched-control FC is actually informative."
+        }
+      },
+      "time": {
+        "n_entities": 6,
+        "n_folds": 6,
+        "total_test_rows": 5920,
+        "sample_pcc": {
+          "entity_macro": 0.9896600614198844,
+          "mean": 0.9896600614198844,
+          "ci_lo": 0.9875169418485574,
+          "ci_hi": 0.9910210370423064,
+          "n_entities": 6,
+          "n_boot": 2000
+        },
+        "log2_rmse": {
+          "entity_macro": 0.3947414605783795,
+          "mean": 0.3947414605783795,
+          "ci_lo": 0.3693663654500033,
+          "ci_hi": 0.43384667251827125,
+          "n_entities": 6,
+          "n_boot": 2000
+        },
+        "log2_mae": {
+          "entity_macro": 0.26963369359599954,
+          "mean": 0.26963369359599954,
+          "ci_lo": 0.25104826767286,
+          "ci_hi": 0.3012748468692618,
+          "n_entities": 6,
+          "n_boot": 2000
+        },
+        "unknown_vs_known": {
+          "definition": "'known' here is the IN-SAMPLE fit metric of the same fold-trained model evaluated on its own fold-train rows (entities it was fit on); it is an optimistic upper bound on true known-entity generalization, not a held-out known-entity estimate (that would need nested/double CV, out of scope for this first pass). 'unknown' is the true held-out fold-test metric.",
+          "unknown_macro_pcc": 0.9896600614198844,
+          "known_in_sample_macro_pcc": 0.9945018158015877,
+          "gap_pcc_known_minus_unknown": 0.0048417543817033115,
+          "unknown_macro_rmse": 0.3947414605783795,
+          "known_in_sample_macro_rmse": 0.2850385328790271,
+          "gap_rmse_unknown_minus_known": 0.10970292769935241
+        },
+        "matched_control_fc": {
+          "mean_fc_pcc": null,
+          "mean_coverage": 0.0,
+          "note": "coverage collapses toward 0 for the plate/strain/time axes because match_controls requires an exact context match (including plate/strain/time), and that context is exactly what the fold removes from the legal (fold-train) control pool; compound is the axis where matched-control FC is actually informative."
+        }
+      }
+    }
+  }
+}

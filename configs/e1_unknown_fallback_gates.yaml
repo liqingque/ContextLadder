@@ -1,0 +1,70 @@
+# E1 adoption gates -- FROZEN before any E1 training run. Its SHA-256 is recorded to the run log
+# by scripts/run_unknown_fallback_ablation.py BEFORE the first model is trained
+# (outputs/e1_unknown_fallback/gates_sha256.json). Do not edit thresholds after that point; a
+# changed file will produce a different recorded hash and is trivially detectable as post-hoc.
+#
+# Scope note (honesty about what this run actually measures): the full grouped pseudo-OOD harness
+# described in 复赛综合审查与提升实验计划.md 6.6.2 (nested LOPO-plate / LOSO-strain / LOCO-compound /
+# time-block folds refit inside the 5,920 train rows, with entity-cluster bootstrap CIs) is NOT
+# built by this run. What IS measured is the frozen official validation split's four
+# split_final categories -- val_strain_only (1,547 unseen-strain rows), val_chem_only (1,065
+# unseen-compound rows), val_both (269 double-unknown rows) and val_time (157 both-seen,
+# time-shifted rows) -- none of which were ever fit on. The frozen validation additionally
+# contains ZERO unseen-plate, unseen-instrument, or unseen-source rows (verified against
+# input/WAYB_WAYC_metadata_train_val), so the plate-residual mechanism cannot be evaluated for
+# generalization on this split at all; G1's plate clause is therefore reported N/A, not "pass".
+schema_version: 1
+
+gate_g0_semantic_correctness:
+  description: "Contract correctness. Must pass in full before G1 is evaluated at all."
+  requires:
+    - "tests/test_unknown_fallback_contract.py T1-T6 (20 tests) all pass"
+    - "unseen-plate (id==0) residual contribution is exactly zero: atol=1e-7, rtol=1e-6"
+    - "non-compound unknown embedding row 0 and, where mask_unknown_onehot is on, the
+       corresponding one-hot column stay exactly zero through init, one optimizer step, and a
+       checkpoint save/load roundtrip"
+    - "compound's index-0 embedding still receives gradient (masked-training contract intact)"
+    - "no strain masking is (re)introduced by any E1 variant"
+    - "train-time and eval-time configs match (same UnknownFallbackConfig used for fit and predict
+       within one run; eval mode has zero stochastic field dropout)"
+    - "no test-truth or test-proteome file (WAYB_WAYC_proteome_raw_test.csv /
+       WAYB_WAYC_metadata_test) is opened by any E1 script"
+    - "runs/final/prediction.csv still reproduces sha256
+       59f99dc431aa5bd6dc5abb46a5390c64072fda505097cb9523b77198a502b17e byte-for-byte after all
+       E1 code is added (scripts/run_hcce.py::HCCEModel forward logic is untouched)"
+  pass_rule: all_of_the_above_true
+
+gate_g1_generalization_evidence:
+  description: "Pseudo-OOD evidence from the frozen official validation split's existing
+    unseen-entity categories (see scope note above). Not a substitute for the full grouped-OOD
+    harness in 6.6.2; a narrower, honestly-scoped stand-in for it."
+  axes: [strain_unseen, compound_unseen, both_unseen]
+  axis_definition: "split_final == val_strain_only | val_chem_only | val_both respectively"
+  metric: "sample-PCC (abs_pcc) and log2 RMSE on the mean50 (0.5*legacy + 0.5*film) ensemble head,
+    same head convention used throughout scripts/a2b_train_variants.py ablations"
+  min_axes_not_worse_than_e1a: 2       # of the 3 axes actually measurable here
+  plate_axis: "not_evaluable_on_frozen_validation -- zero unseen-plate rows exist in this split;
+    reported N/A, does not count toward or against this gate"
+  seed_majority_required: 2            # of 3 seeds [20260810, 3407, 42] must agree on sign of
+                                        # each axis's PCC delta vs e1a for that axis to count as
+                                        # "improved" or "regressed" rather than "no consistent
+                                        # direction"
+  max_tolerated_regression:
+    rmse_increase: 0.02                # absolute log2 RMSE increase vs e1a, per axis, per seed
+    pcc_decrease: 0.02                 # absolute sample-PCC decrease vs e1a, per axis, per seed
+  pass_rule: "at least min_axes_not_worse_than_e1a axes show mean PCC >= e1a - pcc_decrease AND
+    mean RMSE <= e1a + rmse_increase, with seed_majority_required agreement on direction; no axis
+    may exceed max_tolerated_regression outside that allowance"
+
+gate_g2_competition_adoption:
+  description: "Deferred. Requires the official six-module evaluator
+    (scripts/evaluate_official_modules.py), which this run does not invoke. Left for the user to
+    run separately, per project instruction."
+  status: not_evaluated_in_this_run
+  min_delta_W: 0.010
+  max_drop_any_module: 0.005
+  require_no_sign_flip_across_seed_families: true
+  note: "Unchanged from configs/final.yaml's existing rejected_alternatives precedent
+    (ep120_ema99_top3_of_10): a configuration effect that flips sign across seed/fit-seed
+    families is not adoptable evidence. The same discipline applies here -- this floor does not
+    move to rescue a candidate that fails it."

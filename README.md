@@ -28,6 +28,10 @@
 >
 > 其余全部一致：源码、`configs/final.yaml`、三个成员 checkpoint（各 28.6 MB，随仓库分发）、
 > 四份说明文档与合并版、`reports/`、`tests/`、外部数据披露、清单四件套。
+>
+> `outputs/` 只收录下节三个预注册实验的报告、指标 JSON 与 CSV（约 9 MB）；
+> 训练中间产物（E1 六个变体的 checkpoint 约 514 MB、E3 逐折 OOF 原始数组约 800 MB）
+> 不随仓库分发，可由对应脚本按 `configs/` 中的冻结配置重新生成。
 > **官方竞赛数据属于非公开资料，不在本仓库，也不会以任何派生形式发布**；按 `input/README.md`
 > 自行放置后即可运行下面的四条命令。
 >
@@ -78,6 +82,31 @@ TorchDragon 源于中国神话「烛龙」。传说烛龙以目照彻幽暗，�
 「阶梯」指本方案的核心设计原则：把模型对实验条件的依赖组织成一道**可以逐级收缩的层级**。测量上下文中，板号被建模为仪器与来源之上的**分层收缩残差**（0.25 缩放 ＋ L2 收缩）；化学扰动上，训练时随机掩码 25% 的化合物 token，让模型学出一个**训练过的共享未知态**。两处是同一原则的两次实例化——**宁可退到更粗的一级，也不要在没有证据的地方假装知道**。这正对应赛题的四个泛化场景（未见化合物、未见菌株、双重未知、时间插值）。
 
 > 措辞说明：板号分支是**收缩**而非严格归零，未见板的板级残差是否应当严格关闭，正由 E1（`configs/e1_unknown_fallback.yaml`）与 E2 的分组伪 OOD 协议验证中；在该实验给出结论前，本文不声称「未见板自动、严格退回上一级」。
+
+
+## 本轮新增：三个预注册实验（E1 / E2 / E3）
+
+复赛材料冻结之后进行，**未替换任何冻结产物**（`prediction.csv` 仍为
+`59f99dc431aa5bd6dc5abb46a5390c64072fda505097cb9523b77198a502b17e`，本仓库不含该文件，见上表）。
+
+| 实验 | 脚本 | 产出 | 裁决 |
+|---|---|---|---|
+| E1 中性未知 ＋ 严格板级残差 | `scripts/e1_neutral_unknown.py`、`run_unknown_fallback_ablation.py`、`evaluate_e1_grouped_ood.py`；`tests/test_unknown_fallback_contract.py`（20 项契约测试） | `outputs/e1_unknown_fallback/`、`outputs/e1_grouped_ood/` | 否决 |
+| E2 四轴分组伪 OOD 评价协议 | `scripts/grouped_ood_common.py`、`build_grouped_ood_folds.py`、`evaluate_grouped_ood.py`、`merge_grouped_ood_seeds.py` | `outputs/grouped_ood/`（含三种子 `aggregate_3seed.json`） | 采纳，作为可复用工具开源 |
+| E3 受约束可靠性自适应融合 | `scripts/e3_reliability_gate.py` | `outputs/e3_reliability_fusion/` | 否决 |
+
+采纳门控在任何训练之前冻结并记录 SHA-256：`configs/e1_unknown_fallback_gates.yaml`
+→ `outputs/e1_unknown_fallback/gates_sha256.json`（`recorded_before_any_training: true`）。
+
+E2 协议的复用接口 —— 任何候选只要提供 `train_fn` / `predict_fn` 即可接入：
+
+```python
+from scripts.grouped_ood_common import load_universe, build_hcce_variant_functions
+from scripts.evaluate_grouped_ood import evaluate_four_axis
+rh, meta_train, y_train, proteins, mapping = load_universe()
+train_fn, predict_fn = build_hcce_variant_functions(rh, mapping, variant="mask_compound")
+result = evaluate_four_axis(train_fn, predict_fn, "候选名", manifest, meta_train, y_train, mapping)
+```
 
 ## 提交内容
 

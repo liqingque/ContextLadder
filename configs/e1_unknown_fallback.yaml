@@ -1,0 +1,84 @@
+# E1: Neutral Unknown + Strict Hierarchical Residual -- executable config.
+#
+# ContextLadder_复赛综合审查与提升实验计划.md, chapter 6 (section 6.4, Step 1). All new behavior
+# is OFF for e1a (the current frozen model's contract) and turned on incrementally per variant.
+# This file is read by scripts/run_unknown_fallback_ablation.py; it does not touch
+# configs/final.yaml or runs/final/ in any way, and the frozen submission continues to be built
+# only from configs/final.yaml via scripts/train.py.
+#
+# Data boundary (hard constraint, unchanged from configs/final.yaml):
+#   all fitting, categorical vocabularies, and normalization statistics use split_final=='train'
+#   (5,920 rows) only. The frozen official validation rows (split_final != 'train') are used for
+#   metrics reporting ONLY, never for fitting anything. Test proteome/truth are never opened by
+#   any script in this experiment.
+schema_version: 1
+
+model:
+  base_variant: mask_compound   # same compound-only 25% masked training as configs/final.yaml
+  embedding_dim: 64
+  epochs: 40
+  mask_p: 0.25
+  unknown_policy:
+    compound: learned_masked          # unchanged: index 0 trained via existing 25% compound mask
+    strain: neutral_zero              # do NOT reintroduce strain masking -- 0.05/0.10/0.25 all regressed
+    medium: neutral_zero
+    source: neutral_zero
+    instrument: neutral_zero
+    plate: strict_residual_zero
+  measurement_hierarchy:
+    mode: additive_residual
+    plate_residual_scale: 0.25
+    plate_dropout_p: 0.15
+    instrument_dropout_p: 0.05
+
+# Maps directly onto scripts/e1_neutral_unknown.py::UnknownFallbackConfig. Any key here that is
+# not one of UnknownFallbackConfig's declared fields raises SchemaError at load time (T6).
+variants:
+  e1a:   # baseline: current model, completely unchanged
+    zero_freeze_unknown_embedding: false
+    mask_unknown_onehot: false
+    strict_plate_residual: false
+    hierarchical_dropout: false
+  e1b:   # non-compound unknown embedding -> 0, frozen
+    zero_freeze_unknown_embedding: true
+    mask_unknown_onehot: false
+    strict_plate_residual: false
+    hierarchical_dropout: false
+  e1c:   # non-compound unknown one-hot column masked to 0
+    zero_freeze_unknown_embedding: false
+    mask_unknown_onehot: true
+    strict_plate_residual: false
+    hierarchical_dropout: false
+  e1d:   # e1b + e1c: full neutral-unknown contract for non-compound fields
+    zero_freeze_unknown_embedding: true
+    mask_unknown_onehot: true
+    strict_plate_residual: false
+    hierarchical_dropout: false
+  e1e:   # e1d + plate as a strictly gated residual on source/instrument
+    zero_freeze_unknown_embedding: true
+    mask_unknown_onehot: true
+    strict_plate_residual: true
+    hierarchical_dropout: false
+    plate_scale: 0.25
+  e1f:   # e1e + hierarchical field dropout (train-time only)
+    zero_freeze_unknown_embedding: true
+    mask_unknown_onehot: true
+    strict_plate_residual: true
+    hierarchical_dropout: true
+    plate_scale: 0.25
+    plate_dropout_p: 0.15
+    instrument_dropout_p: 0.05
+
+training:
+  seeds: [20260810, 3407, 42]
+  optimizer: AdamW
+  learning_rate: 1.0e-3
+  weight_decay: 1.0e-4
+  loss: "masked MSE averaged over concat/FiLM/legacy heads + model.regularization(), matching
+    the existing HCCE training convention (scripts/a2b_train_variants.py::fit_model_variant);
+    reimplemented independently in scripts/e1_neutral_unknown.py::fit_model_variant_e1 so that
+    the original file is never edited"
+  data_boundary: "split_final == 'train' only (5,920 rows); official validation rows are
+    reporting-only and are never fit on; test proteome/truth are never read by this experiment"
+  protein_filter: "same rule as configs/final.yaml: drop proteins with >=80% missing rate over
+    split_final=='train' rows (contract_4422)"
